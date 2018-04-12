@@ -58,6 +58,38 @@ app.get("/scrape", function(req, res) {
     });
   }); 
 
+app.post("/notes", function(req, res) {
+  // Create a new Note in the db
+  Note.create(req.body)
+    .then(function(dbNote) {
+      return Headline.findOneAndUpdate({}, { $push: { notes: dbNote._id } }, { new: true });
+    })
+    .then(function(dbHeadline) {
+      // If the User was updated successfully, send it back to the client
+      res.json(dbHeadline);
+    })
+    .catch(function(err) {
+      // If an error occurs, send it back to the client
+      res.json(err);
+    });
+});
+
+
+app.get("/notes", function(req, res) {
+
+  Headline.find({})
+
+    .populate("notes")
+    .then(function(dbnotes) {
+
+      res.json(dbnotes);
+    })
+    .catch(function(err) {
+
+      res.json(err);
+    });
+});
+
 
 };
 

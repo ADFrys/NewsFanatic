@@ -1,7 +1,7 @@
    <ul class="nav nav-pills">
     <li role="presentation" class="active"><a href="#">Main</a></li>
     <li role="presentation"><a href="/scrape">Scrape more articles</a></li>
-    <li role="presentation"><a href="/notes">Notes</a></li>
+    <li role="presentation"><a href="/headlines">Headlines</a></li>
   </ul>
 
   <div class="jumbotron">
@@ -12,31 +12,29 @@
   <div class="row">
     <div class="col-md-9">
       <h2>News Articles</h2>
-        <table id="articles">
-        <thead> 
-          <tr>
-            <th id="article-name">Name</th>
-            <th id="article-link">Link</th>
-          </tr>
-      </thead>
-      <tbody>
-        <tr><td></td>
-        <td></td></tr>
-        <tr><td></td>
+      <div id="articles"></div>
+
+<!--       This does not work -->
+      {{#each headlines}}
+        <tr><td data={{this._id}}>{{this.title}}</td>
+        <td></td>{{this.url}}</td></tr>
       </tbody>
+      {{/each}}
   </table>
     </div>
 
+
     <div class="col-md-3">
 
-      <form action="/submit" method="post">
+      <form action="/notes" method="post">
 
       <h2>Enter a Note!</h2>
         <input type="text" name="title" placeholder="Title"><br><br>
         <textarea type="text" name="body">Note</textarea><br><br>
 
-        <input type="submit">
+        <input type="submit" id="notes">
       </form>
+            <div id="notes"></div>
 
 </div>
       </body>
@@ -46,12 +44,12 @@
 
 $.getJSON("/headlines", function(data) {
 
-  // console.log(data[0]._id);
+  console.log(data[0]._id);
   // For each one
 
   for (var i = 0; i < data.length; i++) {
     // Display the apropos information on the page
-    $("#article-name").append("<tr><th id='" + data[i]._id + "'>" + data[i].title + "</th>" + data[i].url + "</tr>");
+ $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br /> https://www.newyorker.com" + data[i].url + "</p>");
 
   };
 });
