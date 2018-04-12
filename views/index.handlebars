@@ -41,3 +41,20 @@
 </div>
       </body>
 </html>
+<script>
+// Grab the articles as a json
+
+$.getJSON("/headlines", function(data) {
+
+  // console.log(data[0]._id);
+  // For each one
+
+  for (var i = 0; i < data.length; i++) {
+    // Display the apropos information on the page
+    $("#article-name").append("<tr><th id='" + data[i]._id + "'>" + data[i].title + "</th>" + data[i].url + "</tr>");
+
+  };
+});
+
+
+</script>

@@ -10,10 +10,8 @@ var PORT = process.env.PORT || 3000;
 var db = require("./models");
 
 
-mongoose.connect("mongodb://localhost/mongoHeadlines");
-// var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-// mongoose.connect("mongodb://heroku_t09tdvkh:i4nl80q0d4r0811skng9gge6t6@ds013192.mlab.com:13192/heroku_t09tdvkh");
-
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.connect(MONGODB_URI);
 
 app.use(express.static("public"));
 
