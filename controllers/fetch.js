@@ -62,7 +62,7 @@ app.post("/notes", function(req, res) {
   // Create a new Note in the db
   Note.create(req.body)
     .then(function(dbNote) {
-      return Headline.findOneAndUpdate({}, { $push: { notes: dbNote._id } }, { new: true });
+      return Headline.findOneAndUpdate({ $push: { notes: dbNote._id } });
     })
     .then(function(dbHeadline) {
       // If the User was updated successfully, send it back to the client
