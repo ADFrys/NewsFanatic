@@ -7,8 +7,10 @@ var axios = require("axios");
 
 
 module.exports = function(app) {
-  // finalResults array will store the scraped headlinesand links.
+
+  // finalResults array will store the scraped headlines and links.
   var finalResults = [];
+
 
   app.get("/", function (req, res) {
   Headline.find({}, function (error, data) {
@@ -60,6 +62,34 @@ module.exports = function(app) {
       })
     });
   }); 
+
+// This currently does not work. Tried to adopt this from a previous activity
+  app.get("/headlines/:id", function(req, res) {
+
+  db.Headline.findOne({ _id: req.params.id })
+   
+    .populate("notes")
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
+
+// This currently does not work as well. 
+app.post("/headlines/:id", function(req, res) {
+  Note.create(req.body)
+    .then(function(dbNote) {
+      return db.Headline.findOneAndUpdate({ _id: req.params.id }, { notes: dbNote._id }, { new: true });
+    })
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
 
 };
 

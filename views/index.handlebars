@@ -14,7 +14,7 @@
       <h2>News Articles</h2>
       <div id="articles"></div>
 
-<!--       This does not work -->
+<!--       This does not work. The data is an array of objects. I'm not sure how to access it using handlebars -->
         {{#each headlines}}
         <tr><td data={{this._id}}>{{this.title}}</td>
         <td></td>{{this.url}}</td></tr>

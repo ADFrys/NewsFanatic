@@ -3,6 +3,7 @@ $.getJSON("/headlines", function(data) {
 
   for (var i = 0; i < data.length; i++) {
     $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br /> https://www.newyorker.com" + data[i].url + "</p>");
+    
   };
 
 });
@@ -12,31 +13,38 @@ $(document).on("click", "p", function() {
 
   var thisId = $(this).attr("data-id");
   console.log(thisId);
+  var thisTitle = $(this).attr("data-title")
 
-  $.getJSON("/headlines/", function(data) {
-
-      console.log(data);
+  $.getJSON("/headlines", function(data) {
 
       $("#notes").append("<h2>Article Id: " + thisId + "</h2>");
 
-      $("#notes").append("<input id='titleinput' name='title' >");
+      $("#notes").append("<input id='titleinput' name='title'>");
 
-      $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
+      $("#notes").append("<textarea id='bodyinput' name='body'></textarea><br>");
 
-      $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
-
-      if (data.note) {
-
-        $("#title").val(data.note.noteTitle);
-
-        $("#note").val(data.note.note);
-      }
+      $("#notes").append("<button data-id='" + thisId + "' id='savenote'>Save Note</button>");
+       
     });
 });
 
 $("#savenote").on("click", function() {
-  var title = $("#titleinput").val().trim();
-  var note = $("#bodyinput").val().trim();
+
+  var thisId = $(this).attr("data-id");
+
+  $.ajax({
+    method: "POST",
+    url: "/headlines/" + thisId,
+    data: {
+      noteTitle: $("#titleinput").val(),
+      note: $("#bodyinput").val()
+    }
+  })
+  .then(function(data) {
+    console.log(data);
+    $("#notes").empty();
+  })
+
 });
 
 
