@@ -6,20 +6,21 @@ var index = require("../models/index.js");
 var axios = require("axios");
 
 
-  module.exports = function(app) {
-    var finalResults = [];
+module.exports = function(app) {
+  // finalResults array will store the scraped headlinesand links.
+  var finalResults = [];
 
   app.get("/", function (req, res) {
-    Headline.find({}, function (error, data) {
-      if (error) {
-        console.log(error);
-      } else {
-        res.render("index", { result: data });
+  Headline.find({}, function (error, data) {
+    if (error) {
+      console.log(error);
+    } else {
+      res.render("index", { result: data });
       }
     })
   });
 
-  app.get("/headlines", function (req, res) {
+    app.get("/headlines", function (req, res) {
     Headline.find({}, function (error, data) {
       if (error) {
         console.log(error);
@@ -29,67 +30,36 @@ var axios = require("axios");
       })
     });
 
-
-app.get("/scrape", function(req, res) {
+//FYI - the scrape works the first time around, but since the models are set to be unique for headline and link, 
+// it throws an error when you click scrape again (due to duplicate articles). I'm not sure what is the best practice for this scenerio
+  app.get("/scrape", function(req, res) {
 
   axios.get("https://www.newyorker.com/news").then(function (response) {
 
-    var $ = cheerio.load(response.data);
-    $(".Card__dekImageContainer___3CRKY").each(function(i, element) {
-      var result = {};
+  var $ = cheerio.load(response.data);
+  $(".Card__dekImageContainer___3CRKY").each(function(i, element) {
+    // Save scraped results into an object that will be pushed into the finalResults array.
+    var result = {};
 
-      result.title = $(this)
-      .children("p")
-      .text();
-      result.url = $(this)
-      .children("a")
-      .attr("href");
+    result.title = $(this)
+    .children("p")
+    .text();
+    result.url = $(this)
+    .children("a")
+    .attr("href");
 
-      finalResults.push(result);
-  });
+    finalResults.push(result);
+    });
 
     Headline.create(finalResults)
     .then(function (dbHeadline) {
       res.json({msg: "Scrape has completed"});
-      })
+    })
     .catch(function (err) {
       console.log(err);
       })
     });
   }); 
-
-app.post("/notes", function(req, res) {
-  // Create a new Note in the db
-  Note.create(req.body)
-    .then(function(dbNote) {
-      return Headline.findOneAndUpdate({ $push: { notes: dbNote._id } });
-    })
-    .then(function(dbHeadline) {
-      // If the User was updated successfully, send it back to the client
-      res.json(dbHeadline);
-    })
-    .catch(function(err) {
-      // If an error occurs, send it back to the client
-      res.json(err);
-    });
-});
-
-
-app.get("/notes", function(req, res) {
-
-  Headline.find({})
-
-    .populate("notes")
-    .then(function(dbnotes) {
-
-      res.json(dbnotes);
-    })
-    .catch(function(err) {
-
-      res.json(err);
-    });
-});
-
 
 };
 
